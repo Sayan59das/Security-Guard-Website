@@ -22,25 +22,32 @@ export function FAQItem({ question, answer, defaultOpen = false }: FAQItemProps)
   const panelId = `${uid}-answer`;
 
   return (
-    <div className="border-t border-tone-rule">
-      <h3>
+    <div>
+      <h3 className="text-h4">
         <button
           id={buttonId}
           type="button"
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
-          className="flex w-full items-center justify-between gap-3 py-3 text-left font-serif text-h3 text-tone-fg"
+          className="flex w-full items-center justify-between gap-3 py-3 text-left text-tone-fg"
         >
           <span>{question}</span>
-          <ChevronDown
+          <span
             aria-hidden="true"
-            strokeWidth={1.5}
             className={cn(
-              'h-3 w-3 shrink-0 text-tone-accent transition-transform duration-500 motion-reduce:transition-none',
-              open && 'rotate-180',
+              'inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors',
+              open ? 'border-ink-900 bg-ink-900 text-brass-300' : 'border-tone-rule text-tone-accent',
             )}
-          />
+          >
+            <ChevronDown
+              strokeWidth={1.75}
+              className={cn(
+                'h-2 w-2 transition-transform duration-500 motion-reduce:transition-none',
+                open && 'rotate-180',
+              )}
+            />
+          </span>
         </button>
       </h3>
       <div

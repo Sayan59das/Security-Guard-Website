@@ -14,8 +14,9 @@ interface BaseProps {
 type AnchorButtonProps = BaseProps & { href: string } & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'className' | 'children'>;
 type NativeButtonProps = BaseProps & { href?: undefined } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'children'>;
 
+// `transition` covers colour, shadow and transform, so hover fades and the 1px press both glide.
 const base =
-  'inline-flex select-none items-center justify-center gap-1 whitespace-nowrap rounded border font-semibold leading-none transition-colors disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex select-none items-center justify-center gap-1 whitespace-nowrap rounded border font-semibold leading-none transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60 disabled:active:translate-y-0';
 
 const sizes: Record<Size, string> = {
   md: 'min-h-6 px-3 text-base',

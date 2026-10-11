@@ -1,20 +1,22 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Instrument_Sans } from 'next/font/google';
+import { Archivo, Instrument_Sans } from 'next/font/google';
 import { company, seo } from '@/content/siteContent';
 import { SITE_URL } from '@/lib/siteUrl';
+import { TopBar } from '@/components/layout/TopBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileActionBar } from '@/components/layout/MobileActionBar';
 import { SmoothAnchors } from '@/components/SmoothAnchors';
+import { RevealOnScroll } from '@/components/RevealOnScroll';
 import { JsonLd } from '@/components/JsonLd';
 import './globals.css';
 
-// Headings: Fraunces, a serif with real character. The optical-size axis lets it
-// tighten up at large sizes; WONK is included so it can be switched off in CSS.
-const fraunces = Fraunces({
+// Headings: Archivo, a sturdy grotesk. The width axis is loaded so headings can be set a
+// little wide (see globals.css), which gives them the solid, badge-like feel of the trade.
+const archivo = Archivo({
   subsets: ['latin'],
-  axes: ['opsz', 'WONK'],
-  variable: '--font-fraunces',
+  axes: ['wdth'],
+  variable: '--font-archivo',
   display: 'swap',
 });
 
@@ -58,7 +60,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${fraunces.variable} ${instrumentSans.variable}`}>
+    <html lang="en-IN" className={`${archivo.variable} ${instrumentSans.variable}`}>
       <body>
         <a
           href="#main"
@@ -66,11 +68,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
+        <TopBar />
         <Header />
         <main id="main">{children}</main>
         <Footer />
         <MobileActionBar />
         <SmoothAnchors />
+        <RevealOnScroll />
         <JsonLd />
       </body>
     </html>

@@ -1,45 +1,55 @@
 import Image from 'next/image';
 import { howItWorks } from '@/content/siteContent';
-import { Reveal } from '@/components/ui/Reveal';
+import { revealDelay } from '@/lib/reveal';
 import { Section } from '@/components/ui/Section';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 
 /**
- * Layout idea: a numbered process. Centred heading, a centred photo, then four equal columns,
- * each with a large serif numeral under a hairline. On a phone the four steps stack.
+ * Layout idea: the photo on the left (it stays in view on large screens), and the four steps on
+ * the right as a numbered timeline joined by a line, because this content really is a sequence.
  */
 export function HowItWorks() {
+  const lastIndex = howItWorks.steps.length - 1;
+
   return (
     <Section id="how-it-works" tone="sand" labelledBy="how-heading">
-      <Reveal>
-        <SectionHeading id="how-heading" eyebrow={howItWorks.eyebrow} title={howItWorks.title} intro={howItWorks.intro} />
-      </Reveal>
+      <SectionHeading id="how-heading" eyebrow={howItWorks.eyebrow} title={howItWorks.title} intro={howItWorks.intro} />
 
-      <Reveal className="mt-6 lg:mt-8">
-        <div className="relative aspect-[16/9] overflow-hidden rounded-md border border-tone-rule bg-ink-800 sm:aspect-[2/1] lg:aspect-[5/2]">
-          <Image
-            src={howItWorks.image.src}
-            alt={howItWorks.image.alt}
-            fill
-            sizes="(min-width: 1200px) 1136px, 100vw"
-            className="object-cover"
-          />
+      <div className="mt-6 grid gap-6 lg:mt-8 lg:grid-cols-12 lg:gap-8">
+        <div className="lg:col-span-5">
+          <div className="lg:sticky lg:top-12">
+            <div data-reveal className="relative aspect-[4/3] overflow-hidden rounded-lg border border-tone-rule bg-ink-800">
+              <Image
+                src={howItWorks.image.src}
+                alt={howItWorks.image.alt}
+                fill
+                sizes="(min-width: 1200px) 460px, (min-width: 1024px) 40vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
         </div>
-      </Reveal>
 
-      <ol className="mt-6 grid gap-x-4 gap-y-5 md:grid-cols-2 lg:mt-8 lg:grid-cols-4">
-        {howItWorks.steps.map((step, index) => (
-          <li key={step.title} className="border-t border-tone-fg pt-3">
-            <Reveal delay={(index % 4) * 0.1}>
-              <span aria-hidden="true" className="block font-serif text-display leading-none text-tone-accent">
-                {String(index + 1).padStart(2, '0')}
+        <ol className="lg:col-span-7">
+          {howItWorks.steps.map((step, index) => (
+            <li key={step.title} data-reveal style={revealDelay(index)} className="relative flex gap-3 pb-5 last:pb-0">
+              {index < lastIndex ? (
+                <span aria-hidden="true" className="absolute bottom-0 left-3 top-6 w-[2px] -translate-x-1/2 bg-paper-300" />
+              ) : null}
+              <span
+                aria-hidden="true"
+                className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 font-heading text-h4 font-semibold text-brass-300"
+              >
+                {index + 1}
               </span>
-              <h3 className="mt-2 text-h3 text-tone-fg">{step.title}</h3>
-              <p className="mt-1 text-tone-muted">{step.description}</p>
-            </Reveal>
-          </li>
-        ))}
-      </ol>
+              <div className="pt-1">
+                <h3 className="text-h3 text-tone-fg">{step.title}</h3>
+                <p className="mt-1 max-w-prose text-tone-muted">{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
     </Section>
   );
 }

@@ -15,6 +15,8 @@ const config: Config = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
+      // Cards and form panels on the paper background.
+      white: '#FFFFFF',
       ink: {
         950: '#0A121B',
         900: '#101B27',
@@ -81,31 +83,35 @@ const config: Config = {
       16: '128px',
       20: '160px',
     },
+    // Three steps of rounding that follow hierarchy: controls 4px, fields 6px, cards and panels 10px.
     borderRadius: {
       none: '0px',
       DEFAULT: '4px',
       md: '6px',
+      lg: '10px',
       full: '9999px',
     },
     boxShadow: {
       none: 'none',
       lift: '0 1px 2px rgba(16, 27, 39, 0.08), 0 16px 32px -20px rgba(16, 27, 39, 0.45)',
+      // Only for the contact form panel, so it reads as the place to act.
+      panel: '0 2px 4px rgba(10, 18, 27, 0.08), 0 24px 48px -24px rgba(10, 18, 27, 0.55)',
     },
     fontFamily: {
-      serif: ['var(--font-fraunces)', 'Georgia', 'Cambria', 'serif'],
+      heading: ['var(--font-archivo)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       sans: ['var(--font-instrument)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
     },
     fontSize: {
-      brand: ['1.25rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
-      eyebrow: ['0.8125rem', { lineHeight: '1.4', letterSpacing: '0.14em', fontWeight: '600' }],
+      brand: ['1.125rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
+      eyebrow: ['0.875rem', { lineHeight: '1.4', letterSpacing: '0.01em', fontWeight: '600' }],
       sm: ['0.9375rem', { lineHeight: '1.6' }],
       base: ['1.0625rem', { lineHeight: '1.7' }],
-      lead: ['clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem)', { lineHeight: '1.6' }],
-      quote: ['clamp(1.375rem, 1.1rem + 1.1vw, 1.875rem)', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
-      h3: ['1.375rem', { lineHeight: '1.3', letterSpacing: '-0.005em' }],
-      h2: ['clamp(2rem, 1.4rem + 2.2vw, 3rem)', { lineHeight: '1.1', letterSpacing: '-0.015em' }],
-      stat: ['clamp(2rem, 1.5rem + 1.8vw, 3rem)', { lineHeight: '1', letterSpacing: '-0.02em' }],
-      display: ['clamp(2.5rem, 1.7rem + 3.4vw, 4.5rem)', { lineHeight: '1.04', letterSpacing: '-0.02em' }],
+      lead: ['clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem)', { lineHeight: '1.6' }],
+      h4: ['1.0625rem', { lineHeight: '1.35', letterSpacing: '-0.005em' }],
+      h3: ['1.25rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
+      h2: ['clamp(1.875rem, 1.35rem + 1.9vw, 2.75rem)', { lineHeight: '1.12', letterSpacing: '-0.02em' }],
+      stat: ['clamp(1.75rem, 1.4rem + 1.3vw, 2.5rem)', { lineHeight: '1', letterSpacing: '-0.02em' }],
+      display: ['clamp(2.25rem, 1.5rem + 2.9vw, 3.75rem)', { lineHeight: '1.06', letterSpacing: '-0.025em' }],
     },
     maxWidth: {
       none: 'none',
@@ -140,10 +146,16 @@ const config: Config = {
           from: { opacity: '0' },
           to: { opacity: '1' },
         },
+        // The hero photo: fades in while settling from very slightly larger, like a lens focusing.
+        settle: {
+          from: { opacity: '0', transform: 'scale(1.03)' },
+          to: { opacity: '1', transform: 'none' },
+        },
       },
       animation: {
         rise: 'rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both',
         'fade-in': 'fade-in 0.45s ease-out both',
+        settle: 'settle 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
       },
     },
   },

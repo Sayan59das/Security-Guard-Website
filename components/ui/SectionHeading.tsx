@@ -6,28 +6,34 @@ interface SectionHeadingProps {
   eyebrow: string;
   title: string;
   intro?: string;
-  /** Centred by default so every section sits on the same vertical axis. */
-  align?: 'center' | 'left';
+  /**
+   * `split` (default): title on the left, intro beside it on large screens, so the heading
+   * takes little height. `stack`: intro under the title, for narrow columns.
+   */
+  layout?: 'split' | 'stack';
   className?: string;
 }
 
-/** Eyebrow label, serif H2 and optional intro. Colours follow the surrounding section tone. */
-export function SectionHeading({ id, eyebrow, title, intro, align = 'center', className }: SectionHeadingProps) {
-  const centered = align === 'center';
+/** Section label, H2 and optional intro, left aligned. Colours follow the surrounding section tone. */
+export function SectionHeading({ id, eyebrow, title, intro, layout = 'split', className }: SectionHeadingProps) {
+  const split = layout === 'split' && Boolean(intro);
 
   return (
-    <div className={cn(centered ? 'mx-auto max-w-reading text-center' : 'max-w-prose', className)}>
-      <p className={cn('mb-2 flex items-center gap-1.5 text-eyebrow uppercase text-tone-accent', centered && 'justify-center')}>
-        <span aria-hidden="true" className="h-px w-5 bg-tone-accent" />
-        {eyebrow}
-        {/* Mirrored rule on centred headings so the label is symmetrical. */}
-        {centered ? <span aria-hidden="true" className="h-px w-5 bg-tone-accent" /> : null}
-      </p>
-      <h2 id={id} className="text-h2 text-tone-fg">
-        {title}
-      </h2>
+    <div data-reveal className={cn(split ? 'grid gap-2 lg:grid-cols-12 lg:items-end lg:gap-8' : 'max-w-prose', className)}>
+      <div className={split ? 'lg:col-span-7' : undefined}>
+        <p className="mb-1.5 flex items-center gap-1 text-eyebrow text-tone-accent">
+          <span aria-hidden="true" className="h-[2px] w-3 bg-brass-500" />
+          {eyebrow}
+        </p>
+        <h2 id={id} className="text-h2 text-tone-fg">
+          {title}
+        </h2>
+      </div>
+      {/* Beside the title the intro is set at body size, so it supports the title instead of outweighing it. */}
       {intro ? (
-        <p className={cn('mt-2 text-lead text-tone-muted', centered && 'mx-auto max-w-measure')}>{intro}</p>
+        <p className={cn('text-tone-muted', split ? 'max-w-measure text-lead lg:col-span-5 lg:text-base' : 'mt-2 text-lead')}>
+          {intro}
+        </p>
       ) : null}
     </div>
   );

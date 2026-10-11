@@ -42,6 +42,26 @@ export function Header() {
     };
   }, [open]);
 
+  // A soft shadow once the page has scrolled, so the header separates from the content
+  // passing under it. One passive listener, at most one state change per frame.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 8);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   // If the window grows to the desktop layout, make sure the mobile menu is not left open.
   useEffect(() => {
     const desktop = window.matchMedia('(min-width: 1024px)');
@@ -53,7 +73,13 @@ export function Header() {
   }, []);
 
   return (
-    <header ref={headerRef} className="tone-dark sticky top-0 z-50 border-b border-tone-rule bg-ink-900 text-tone-fg">
+    <header
+      ref={headerRef}
+      className={cn(
+        'tone-dark sticky top-0 z-50 border-b border-tone-rule bg-ink-900 text-tone-fg transition-shadow duration-500',
+        scrolled && 'shadow-lift',
+      )}
+    >
       <div className="mx-auto grid h-9 w-full max-w-container grid-cols-[1fr_auto] items-center gap-2 px-2 sm:px-3 lg:grid-cols-[1fr_auto_1fr] lg:px-4">
         <a href="/" className="shrink-0 justify-self-start">
           <Logo />
@@ -76,7 +102,7 @@ export function Header() {
             href={`tel:${contact.phone.href}`}
             aria-label={`Call ${contact.phone.display}`}
             title={contact.phone.display}
-            className="hidden h-6 w-6 items-center justify-center rounded border border-tone-rule text-tone-fg transition-colors hover:border-tone-muted lg:inline-flex"
+            className="hidden h-6 w-6 items-center justify-center rounded border border-tone-rule text-brass-300 transition-colors hover:border-tone-muted lg:inline-flex"
           >
             <Phone aria-hidden="true" strokeWidth={1.5} className="h-2 w-2" />
           </a>
@@ -112,7 +138,7 @@ export function Header() {
                   <a
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="flex min-h-7 items-center font-serif text-h3 text-tone-fg"
+                    className="flex min-h-7 items-center font-heading text-h3 font-semibold text-tone-fg"
                   >
                     {item.label}
                   </a>

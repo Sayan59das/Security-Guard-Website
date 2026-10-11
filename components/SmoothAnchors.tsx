@@ -56,7 +56,9 @@ export function SmoothAnchors() {
       event.preventDefault();
       const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const to = Math.min(Math.max(target.getBoundingClientRect().top + window.scrollY - offset, 0), maxScroll);
+      // "Back to top" goes to the very top, so the strip above the header shows again too.
+      const to =
+        hash === '#top' ? 0 : Math.min(Math.max(target.getBoundingClientRect().top + window.scrollY - offset, 0), maxScroll);
 
       history.pushState(null, '', hash);
       if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');

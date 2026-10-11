@@ -1,7 +1,10 @@
 import { Mail, MapPin, Phone } from 'lucide-react';
-import { company, contact, footer, nav, quoteCta } from '@/content/siteContent';
+import { company, contact, footer, nav, quoteCta, services } from '@/content/siteContent';
 import { Container } from '@/components/ui/Container';
 import { Logo } from '@/components/ui/Logo';
+
+const columnHeading = 'font-sans text-eyebrow text-tone-accent';
+const linkClass = 'text-sm text-tone-muted transition-colors hover:text-tone-fg';
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -10,21 +13,21 @@ export function Footer() {
   return (
     <footer className="tone-dark bg-ink-950 text-tone-fg">
       <Container className="pb-12 pt-8 md:pb-6">
-        <div className="grid gap-6 md:grid-cols-3 md:gap-4">
-          <div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-12 lg:gap-4">
+          <div className="lg:col-span-4">
             <Logo />
             <p className="mt-2 max-w-narrow text-sm text-tone-muted">{footer.about}</p>
-            <p className="mt-3 text-sm text-tone-muted">
-              {company.licence.label}: <span className="text-tone-fg">{company.licence.value}</span>
+            <p className="mt-3 inline-flex rounded border border-tone-rule px-1.5 py-1 text-sm text-tone-muted">
+              {company.licence.label}:&nbsp;<span className="text-tone-fg">{company.licence.value}</span>
             </p>
           </div>
 
-          <nav aria-label="Footer">
-            <h2 className="font-sans text-eyebrow uppercase text-tone-accent">Quick links</h2>
+          <nav aria-label="Footer" className="lg:col-span-2">
+            <h2 className={columnHeading}>Quick links</h2>
             <ul className="mt-2 space-y-1">
               {[...nav, quoteCta].map((item) => (
                 <li key={item.href + item.label}>
-                  <a href={item.href} className="text-sm text-tone-muted transition-colors hover:text-tone-fg">
+                  <a href={item.href} className={linkClass}>
                     {item.label}
                   </a>
                 </li>
@@ -32,12 +35,25 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div>
-            <h2 className="font-sans text-eyebrow uppercase text-tone-accent">Contact</h2>
+          <div className="lg:col-span-3">
+            <h2 className={columnHeading}>Services</h2>
+            <ul className="mt-2 space-y-1">
+              {services.map((service) => (
+                <li key={service.id}>
+                  <a href="#services" className={linkClass}>
+                    {service.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-3">
+            <h2 className={columnHeading}>Contact</h2>
             <ul className="mt-2 space-y-1.5 text-sm text-tone-muted">
               <li className="flex gap-1.5">
                 <Phone aria-hidden="true" strokeWidth={1.5} className="mt-0.5 h-2 w-2 shrink-0 text-tone-accent" />
-                <a href={`tel:${contact.phone.href}`} className="transition-colors hover:text-tone-fg">
+                <a href={`tel:${contact.phone.href}`} className="font-semibold text-tone-fg transition-colors hover:text-brass-300">
                   {contact.phone.display}
                 </a>
               </li>

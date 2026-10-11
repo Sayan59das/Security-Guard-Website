@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
  * Until then it shows a clearly labelled placeholder (a faint street grid with a pin).
  */
 export function MapPlaceholder({ className }: { className?: string }) {
-  const frame = 'relative aspect-[16/10] overflow-hidden rounded-md border border-tone-rule bg-tone-surface';
+  const frame = 'relative aspect-[16/10] overflow-hidden rounded-lg border border-tone-rule bg-tone-surface';
 
   if (contact.mapEmbedUrl) {
     return (
@@ -37,7 +37,7 @@ export function MapPlaceholder({ className }: { className?: string }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-3 text-center">
         <MapPin aria-hidden="true" strokeWidth={1.5} className="h-5 w-5 text-tone-accent" />
-        <p className="text-eyebrow uppercase text-tone-accent">Map placeholder</p>
+        <p className="text-eyebrow text-tone-accent">Map placeholder</p>
         <p className="max-w-narrow text-sm text-tone-muted">
           Add a Google Maps embed link as <code className="text-tone-fg">mapEmbedUrl</code> in
           content/siteContent.ts to show your location here.

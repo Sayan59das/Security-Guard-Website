@@ -2,14 +2,20 @@ import {
   BadgeCheck,
   Building2,
   CalendarDays,
+  CircleParking,
   ClipboardCheck,
   Factory,
   GraduationCap,
+  HardHat,
+  Hospital,
   House,
   Moon,
   RefreshCw,
+  School,
+  Store,
   Timer,
   UserCheck,
+  Warehouse,
   type LucideIcon,
 } from 'lucide-react';
 import type { IconName } from '@/content/siteContent';
@@ -30,6 +36,12 @@ const icons: Record<IconName, LucideIcon> = {
   timer: Timer,
   'clipboard-check': ClipboardCheck,
   refresh: RefreshCw,
+  store: Store,
+  warehouse: Warehouse,
+  school: School,
+  hospital: Hospital,
+  'hard-hat': HardHat,
+  parking: CircleParking,
 };
 
 interface IconProps {

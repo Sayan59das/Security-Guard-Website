@@ -4,6 +4,7 @@ import { WhyUs } from '@/components/sections/WhyUs';
 import { HowItWorks } from '@/components/sections/HowItWorks';
 import { Industries } from '@/components/sections/Industries';
 import { Testimonials } from '@/components/sections/Testimonials';
+import { CtaBand } from '@/components/sections/CtaBand';
 import { FAQ } from '@/components/sections/FAQ';
 import { Contact } from '@/components/sections/Contact';
 
@@ -16,6 +17,7 @@ export default function HomePage() {
       <HowItWorks />
       <Industries />
       <Testimonials />
+      <CtaBand />
       <FAQ />
       <Contact />
     </>

@@ -32,7 +32,13 @@ export type IconName =
   | 'graduation-cap'
   | 'timer'
   | 'clipboard-check'
-  | 'refresh';
+  | 'refresh'
+  | 'store'
+  | 'warehouse'
+  | 'school'
+  | 'hospital'
+  | 'hard-hat'
+  | 'parking';
 
 export interface NavItem {
   label: string;
@@ -57,6 +63,8 @@ export interface Point {
   title: string;
   description: string;
   icon: IconName;
+  /** Shown larger and in brass. Use it for the one promise that matters most to clients. */
+  featured?: boolean;
 }
 
 export interface Step {
@@ -67,6 +75,7 @@ export interface Step {
 export interface IndustryItem {
   name: string;
   note: string;
+  icon: IconName;
 }
 
 export interface Testimonial {
@@ -185,12 +194,14 @@ export const hero = {
   primaryCta: { label: 'Request a Quote', href: '#contact' },
   secondaryCta: { label: 'Call Now' },
   image: {
-    // PLACEHOLDER: replace with a real photo of your own guards (wide, about 21:9, works best).
+    // PLACEHOLDER: replace with a real photo of your own guards, at least 1200 x 1200.
+    // It is shown in a tall frame beside the headline on large screens and a wide frame on
+    // phones, cropped from the centre, so keep the guard near the middle of the picture.
     // Keep the alt text accurate to the photo you use.
     src: '/images/placeholders/hero-guard-at-gate.jpg',
     alt: 'A uniformed security guard checking a visitor’s details at the gate of a residential society',
-    width: 1920,
-    height: 823,
+    width: 1200,
+    height: 1200,
   } satisfies ImageContent,
   // PLACEHOLDER: these are NOT real figures. Replace with your own true numbers,
   // then set `placeholder: false` on each so the sample-figures note disappears.
@@ -200,7 +211,6 @@ export const hero = {
     { value: '00', label: 'Years in business', placeholder: true },
   ] satisfies Stat[],
 } as const;
-
 /* -------------------------------------------------------------------------- */
 /* Services                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -210,6 +220,8 @@ export const servicesSection = {
   title: 'Six kinds of cover, one standard of guard.',
   intro:
     'Tell us what you need to protect and when. We will recommend the number of guards and the shifts that make sense, and leave out the ones that do not.',
+  /** Link at the bottom of each service card. It opens the form with that service chosen. */
+  cardCta: 'Get a quote',
 } as const;
 
 export const services: Service[] = [
@@ -297,6 +309,7 @@ export const whyUs = {
       description:
         'If a guard is absent, late, or just not the right fit for your premises, tell us and we send a replacement. You should never be left with an empty post.',
       icon: 'refresh',
+      featured: true,
     },
   ] satisfies Point[],
 } as const;
@@ -349,16 +362,16 @@ export const industries = {
   title: 'Places we guard, big and small.',
   intro: 'From a single gate to a whole campus. If it has an entrance, we can staff it.',
   items: [
-    { name: 'Housing societies and apartments', note: 'Gate entry, visitor logs, deliveries and night rounds.' },
-    { name: 'Shops and showrooms', note: 'A presentable guard at the door and an eye on the floor.' },
-    { name: 'Offices and business centres', note: 'Reception desk, visitor passes and after-hours cover.' },
-    { name: 'Factories and manufacturing units', note: 'Gate control, vehicle checks and shift handovers.' },
-    { name: 'Warehouses and godowns', note: 'Loading-bay supervision and perimeter rounds.' },
-    { name: 'Schools and colleges', note: 'Campus gates, pick-up times and visitor control.' },
-    { name: 'Hospitals and clinics', note: 'Calm crowd handling and controlled entry points.' },
-    { name: 'Construction sites', note: 'Material security and site access after working hours.' },
-    { name: 'Banquet halls and event venues', note: 'Entry checks, parking and crowd flow.' },
-    { name: 'Parking and commercial complexes', note: 'Barrier control, patrols and incident reporting.' },
+    { name: 'Housing societies and apartments', note: 'Gate entry, visitor logs, deliveries and night rounds.', icon: 'house' },
+    { name: 'Shops and showrooms', note: 'A presentable guard at the door and an eye on the floor.', icon: 'store' },
+    { name: 'Offices and business centres', note: 'Reception desk, visitor passes and after-hours cover.', icon: 'building' },
+    { name: 'Factories and manufacturing units', note: 'Gate control, vehicle checks and shift handovers.', icon: 'factory' },
+    { name: 'Warehouses and godowns', note: 'Loading-bay supervision and perimeter rounds.', icon: 'warehouse' },
+    { name: 'Schools and colleges', note: 'Campus gates, pick-up times and visitor control.', icon: 'school' },
+    { name: 'Hospitals and clinics', note: 'Calm crowd handling and controlled entry points.', icon: 'hospital' },
+    { name: 'Construction sites', note: 'Material security and site access after working hours.', icon: 'hard-hat' },
+    { name: 'Banquet halls and event venues', note: 'Entry checks, parking and crowd flow.', icon: 'calendar' },
+    { name: 'Parking and commercial complexes', note: 'Barrier control, patrols and incident reporting.', icon: 'parking' },
   ] satisfies IndustryItem[],
 } as const;
 
@@ -400,6 +413,15 @@ export const testimonials: Testimonial[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
+/* Call-to-action band (between testimonials and FAQ)                         */
+/* -------------------------------------------------------------------------- */
+
+export const ctaBand = {
+  title: 'Need guards at your site?',
+  body: 'Tell us where and when. We will call you back, and you get a written quote after a short call or a site visit.',
+} as const;
+
+/* -------------------------------------------------------------------------- */
 /* FAQ                                                                        */
 /* -------------------------------------------------------------------------- */
 
@@ -407,6 +429,7 @@ export const faqSection = {
   eyebrow: 'Questions',
   title: 'Things people ask before they call.',
   intro: 'Not here? Call us or send the form and we will answer in plain words.',
+  callLabel: 'Prefer to talk it through?',
 } as const;
 
 // REVIEW: these answers describe your policies. Confirm each one before launch.

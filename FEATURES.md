@@ -7,54 +7,59 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 ### Whole site
 - [x] Single page with anchor-linked sections in the agreed order
 - [x] All editable content in one file, `content/siteContent.ts`, with `PLACEHOLDER` and `REVIEW` tags
-- [x] Custom Tailwind theme: own palette (default blue/indigo removed), 8px spacing scale, 4px radius, type scale
-- [x] Fraunces + Instrument Sans through `next/font`
+- [x] Custom Tailwind theme: own palette (default blue/indigo removed), 8px spacing scale, radius by hierarchy (4 / 6 / 10px), type scale
+- [x] Archivo (headings, set slightly wide) + Instrument Sans (body) through `next/font`
 - [x] One icon set (lucide-react), no emoji
-- [x] Symmetrical layout: every section centred on one axis, equal-width columns, header nav in the true centre
-- [x] Smooth motion: one shared easing curve, soft scroll reveals with staggering (Framer Motion, lazy-loaded), staggered hero entrance, eased menu and accordion
-- [x] Eased in-page scrolling that takes longer for longer distances, stops when the visitor scrolls, updates the URL and moves focus to the target
+- [x] Business layout: left-aligned split section headings, white cards on paper, one brass highlight (see DESIGN.md)
+- [x] Smooth motion with no animation library: staggered hero entrance with the photo fading in, scroll reveals that ease each section's blocks into place (staggered in grids), header shadow on scroll, card hover lift, button press; GPU-only (opacity and transform)
+- [x] Eased in-page scrolling that takes longer for longer distances, stops when the visitor scrolls, updates the URL and moves focus to the target; "Back to top" returns to the very top
 - [x] All motion off under `prefers-reduced-motion` (anchor links then jump instantly)
 - [x] Skip-to-content link and visible focus ring on every interactive element
-- [x] Mobile-first layout, checked at 360px, 768px and 1280px with no horizontal overflow
+- [x] Mobile-first layout, checked at 390px, 768px and 1440px with no horizontal overflow
 - [x] Extra: slim Call / Request a Quote bar pinned to the bottom on phones (hides over the hero and the contact form)
 
 ### Header
-- [x] Sticky header with logo, six anchor links centred on the page, a call icon and a "Request a Quote" button
+- [x] Top bar on large screens with office hours, email and phone
+- [x] Sticky header with logo, six anchor links centred on the page, a call button and a "Request a Quote" button
 - [x] Mobile menu that eases open and shut: opens with Enter or Space, Tab moves straight into the links, Escape closes it and returns focus, a link choice or outside click closes it
 
 ### Hero
-- [x] Centred layout with a specific headline, one supporting sentence and two CTAs (Request a Quote, Call Now)
-- [x] Three trust figures, clearly marked as sample figures until replaced
-- [x] Wide photo in an even double frame, using `next/image` (priority loaded)
-- [ ] Real photo (placeholder file in use)
+- [x] Clean split with nothing overlapping: headline, one supporting sentence and two CTAs (Request a Quote, Call) on the left, the photo in a brass-edged frame on the right (below the buttons on phones)
+- [x] Three trust figures in a band at the bottom, clearly marked as sample figures until replaced
+- [ ] Real photo (placeholder file in use; at least 1200 x 1200, guard near the centre)
 - [ ] Real trust figures (placeholders in use)
 
 ### Services
 - [x] Six services with icon, title and short description: residential, commercial/office, event, industrial/warehouse, night patrol and gatekeeping, personal/VIP
-- [x] Open ruled grid layout (not repeated rounded cards)
+- [x] White cards with a navy icon tile
+- [x] "Get a quote" on each card jumps to the form with that service already chosen
 
 ### Why choose us
-- [x] Five points: verified guards, training and uniforms, fast deployment, supervisor visits, replacement guarantee
+- [x] Five points: verified guards, training and uniforms, fast deployment, supervisor visits, replacement guarantee (shown as the brass highlight)
 - [ ] Owner has confirmed each point is true for the business (`REVIEW` tags)
 
 ### How it works
-- [x] Four numbered steps in equal columns: enquiry, site assessment, deployment, ongoing support, under a wide photo
+- [x] Four steps as a numbered timeline beside the photo (the photo stays in view on large screens)
 - [ ] Real photo (placeholder file in use)
 
 ### Industries
-- [x] Ten industries, each with a one-line note, as a typographic two-column list
+- [x] Ten industries as tiles, each with an icon and a one-line note
 
 ### Testimonials
-- [x] Three sample testimonials in equal columns, each with a visible "Placeholder" tag until `placeholder: false`
+- [x] Three sample testimonials in white panels, each with a visible "Placeholder" tag until `placeholder: false`
 - [ ] Real testimonials, with permission
+
+### Call-to-action band
+- [x] Navy band before the FAQ with one sentence, Request a Quote and Call buttons
 
 ### FAQ
 - [x] Seven questions: pricing, training, replacement, minimum contract, armed vs unarmed, emergency deployment, areas covered
+- [x] Two columns: heading and a direct phone line on the left, the questions on the right
 - [x] Accessible accordion that eases open and shut: real buttons, `aria-expanded` / `aria-controls`, Enter and Space, collapsed answers removed from the tab order
 - [ ] Owner has confirmed the answers match company policy (`REVIEW` tags)
 
 ### Contact
-- [x] Form with name, phone, email (optional), service, location and message
+- [x] Form with name, phone, email (optional), service, location and message, in a raised white panel
 - [x] Validation in the browser and again on the server, from one shared Zod schema; Indian mobile numbers accepted with or without +91
 - [x] Inline errors linked to fields, first invalid field gets focus
 - [x] Loading, success and error states, with focus moved to the outcome message
@@ -66,7 +71,7 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 - [x] Map placeholder, with support for a real Google Maps embed through `contact.mapEmbedUrl`
 
 ### Footer
-- [x] About line, quick links, contact details, copyright and a licence / registration placeholder
+- [x] Four columns: about line and licence / registration placeholder, quick links, services, contact details; copyright and "Back to top"
 
 ### SEO and sharing
 - [x] Page title, description, canonical URL
@@ -90,7 +95,6 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 
 Smaller ideas worth considering:
 
-- [ ] Clicking a service pre-selects it in the form
 - [ ] Highlight the current section in the header navigation
 - [ ] Shared rate-limit store (Upstash Redis) and a CAPTCHA if spam appears
 - [ ] Automated end-to-end tests (Playwright) for the form and menu
@@ -103,7 +107,9 @@ Measured on a local production build (`next build` then `next start`), Lighthous
 ### Performance
 - Target: Lighthouse performance 90 or higher, layout shift under 0.1, no long main-thread blocking
 - Measured: performance **99**, cumulative layout shift **0**, total blocking time **0 ms**, first contentful paint 0.9 s, largest contentful paint 2.1 s
-- First-load JavaScript for the page: 139 kB; Framer Motion loads afterwards as a separate chunk
+- First-load JavaScript for the page: 124 kB (no animation library; all motion is CSS plus one small IntersectionObserver)
+- Smoothness, measured on the current design in headless Chrome with the CPU slowed 4x: layout shift **0** at 1440px and 390px, **100%** of frames on time (60fps) while scrolling the whole page, 7 ms of main-thread blocking on the phone profile
+- The Lighthouse figures above were taken on the first version of the design; run Lighthouse again before launch
 - Fonts are self-hosted through `next/font` with `display: swap`; images are served as WebP through `next/image` with explicit sizes
 - Open: these figures use placeholder images. Real photos will change the largest contentful paint, so measure again once they are in (keep each photo well under about 200 KB after optimisation).
 
@@ -113,7 +119,7 @@ Measured on a local production build (`next build` then `next start`), Lighthous
 - Colour pairs checked with the WCAG contrast formula (see DESIGN.md); body text 15:1, muted text on paper 5.3:1, accent text on paper 6.0:1
 - Keyboard: the mobile menu, FAQ accordion, eased scrolling and every form state were exercised with scripted browser tests (Tab, Enter, Space, Escape, wheel interruption)
 - Semantic landmarks, one `h1`, ordered headings, labelled form controls with errors announced
-- Reduced motion respected (anchor links jump, no reveal, no hero entrance, no menu or accordion animation)
+- Reduced motion respected (anchor links jump, no scroll reveal, no hero entrance, no menu or accordion animation), checked with a scripted browser test
 - Not yet done: a manual pass with a screen reader (VoiceOver or NVDA) and testing on real phones
 
 ### SEO

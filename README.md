@@ -12,16 +12,15 @@ Sections, in order: sticky header, hero, services, why choose us, how it works, 
 | --- | --- |
 | **Next.js 14** (App Router) + **TypeScript** | Static, fast pages with a built-in API route for the form; types catch content mistakes early. Pinned to 14.2.35 (see [Security notes](#security-notes)). |
 | **Tailwind CSS 3** with a custom theme | Design tokens (colours, 8px spacing, type scale) live in one config file; the default blue/indigo palette is removed. |
-| **Framer Motion** | One job only: a soft fade-up when a block scrolls into view. Loaded lazily and switched off for `prefers-reduced-motion`. |
 | **React Hook Form** + **Zod** | Simple, accessible form state, and one validation schema shared by the browser and the server. |
 | **@hookform/resolvers** | The official adapter that lets React Hook Form use a Zod schema. Without it we would hand-write that glue. |
 | **Resend** | Simple transactional email with a free tier, used by the `/api/contact` route. |
-| **next/font** (Fraunces + Instrument Sans) | Self-hosted fonts with no layout shift and no request to Google from the visitor's browser. |
+| **next/font** (Archivo + Instrument Sans) | Self-hosted fonts with no layout shift and no request to Google from the visitor's browser. |
 | **lucide-react** | One consistent icon set (no emoji), tree-shaken so only the icons used are shipped. |
 | **ESLint** (`eslint-config-next`) | Catches accessibility and React mistakes at build time. |
 | PostCSS + Autoprefixer | Required by Tailwind. |
 
-No other runtime dependencies. A three-line helper (`lib/cn.ts`) replaces `clsx`, and the rate limiter is hand-written (`lib/rateLimit.ts`).
+No other runtime dependencies. A three-line helper (`lib/cn.ts`) replaces `clsx`, the rate limiter is hand-written (`lib/rateLimit.ts`), and all motion is plain CSS (no animation library).
 
 ## Folder structure
 
@@ -30,15 +29,18 @@ No other runtime dependencies. A three-line helper (`lib/cn.ts`) replaces `clsx`
 ├── app/
 │   ├── layout.tsx            Fonts, metadata, header/footer, structured data
 │   ├── page.tsx              Puts the sections in order
-│   ├── globals.css           Tone tokens, focus ring, collapsible panels, reduced-motion rules
+│   ├── globals.css           Tone tokens, focus ring, collapsible panels, scroll reveal, reduced-motion rules
 │   ├── api/contact/route.ts  Form endpoint: validation, honeypot, rate limit, email
 │   ├── sitemap.ts, robots.ts Search engine files
 │   └── icon.svg, apple-icon.png   Favicon and touch icon
 ├── components/
-│   ├── sections/             Hero, Services, WhyUs, HowItWorks, Industries, Testimonials, FAQ, Contact
-│   ├── layout/               Header (with mobile menu), Footer, MobileActionBar
-│   ├── ui/                   Container, Section, SectionHeading, Button, Icon, Reveal, Logo, PlaceholderTag
-│   ├── ServiceCard.tsx, FAQItem.tsx, ContactForm.tsx, MapPlaceholder.tsx, JsonLd.tsx
+│   ├── sections/             Hero, Services, WhyUs, HowItWorks, Industries,
+│   │                         Testimonials, CtaBand, FAQ, Contact
+│   ├── layout/               TopBar, Header (with mobile menu), Footer, MobileActionBar
+│   ├── ui/                   Container, Section, SectionHeading, Button, Icon, Logo, PlaceholderTag
+│   ├── ContactForm.tsx       The quote form in the contact section
+│   ├── ServiceCard.tsx, ServiceQuoteLink.tsx, FAQItem.tsx, MapPlaceholder.tsx, JsonLd.tsx
+│   ├── RevealOnScroll.tsx    Eases `data-reveal` blocks into place as they scroll into view
 │   └── SmoothAnchors.tsx     Eased scrolling for in-page links
 ├── content/
 │   └── siteContent.ts       ALL editable text and business details (edit this one)
@@ -47,6 +49,8 @@ No other runtime dependencies. A three-line helper (`lib/cn.ts`) replaces `clsx`
 │   ├── sendEnquiry.ts        Resend email, with a console fallback for local development
 │   ├── rateLimit.ts          Small in-memory rate limiter
 │   ├── siteUrl.ts            Resolves the public site URL
+│   ├── servicePick.ts        Lets a service card pre-select that service in the form
+│   ├── reveal.ts             Stagger helper for scroll reveals
 │   └── cn.ts                 Class-name helper
 ├── public/
 │   ├── images/placeholders/  Clearly labelled placeholder photos (replace these)
@@ -129,14 +133,14 @@ To use a real map, paste the `src` from Google Maps, Share, Embed a map into `co
 
 ## Design system summary
 
-Calm and ruled, like a well-kept duty logbook. Full detail, with reasoning, is in **[DESIGN.md](./DESIGN.md)**.
+Uniform navy and badge brass, built to turn a worried visitor into a call or a quote request. Full detail, with reasoning, is in **[DESIGN.md](./DESIGN.md)**.
 
-- **Colour:** night navy `#101B27`, warm paper `#F6F1E7`, sand `#ECE5D5`, one muted brass accent `#B98E42` (text variants `#775519` on light, `#DDBE80` on dark). All text pairs meet WCAG AA.
-- **Fonts:** Fraunces (serif, headings and numerals) with Instrument Sans (body and UI).
+- **Colour:** night navy `#101B27`, warm paper `#F6F1E7`, sand `#ECE5D5`, white cards, one brass accent `#B98E42` (text variants `#775519` on light, `#DDBE80` on dark). All text pairs meet WCAG AA.
+- **Fonts:** Archivo, set slightly wide, for headings and figures, with Instrument Sans for body and UI.
 - **Spacing:** strict 8px system. In this project's Tailwind theme, `p-2` is **16px** and `py-12` is **96px** (the key is the number of 8px steps). Max content width 1200px.
-- **Shape:** 4px radius, 1px hairline borders, one soft shadow used only on the mobile menu and call bar.
-- **Layout:** symmetrical, with every section centred on one vertical axis and equal-width columns either side.
-- **Motion:** one easing curve for everything, a soft fade-up on scroll, a staggered hero entrance and eased in-page scrolling, all off under `prefers-reduced-motion`.
+- **Shape:** radius by hierarchy (4px controls, 6px fields, 10px cards); one shadow for the contact form, one for the mobile menu and call bar.
+- **Layout:** left aligned, nothing layered over photos. A split hero (headline and buttons left, framed photo right), split section headings, white cards on paper, and one brass "replacement guarantee" panel as the section highlight.
+- **Motion:** a staggered hero entrance, sections that ease into place as they scroll into view, header shadow on scroll, card hover lift and eased in-page scrolling. Only opacity and transform are animated (smooth on low-end phones); all off under `prefers-reduced-motion`.
 
 ## Scripts reference
 

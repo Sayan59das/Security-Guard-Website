@@ -63,20 +63,23 @@
 
   body {
     @apply bg-paper-100 font-sans text-base text-ink-900 antialiased;
-    text-rendering: optimizeLegibility;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-serif font-medium text-balance;
-    /* Fraunces' "wonky" alternates are switched off to keep the headings sober. */
-    font-variation-settings: 'WONK' 0;
+    @apply font-heading font-semibold text-balance;
   }
 
-  .font-serif {
-    font-variation-settings: 'WONK' 0;
+  /* Archivo is set slightly wide, like the lettering on a uniform badge. Width is a variable-font
+     axis, so it costs nothing extra to load. */
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-heading {
+    font-variation-settings: 'wdth' 108;
   }
 
   p {
@@ -131,6 +134,28 @@
     visibility: visible;
     transition-delay: 0s;
   }
+}
+
+/*
+  Scroll reveal. Mark a block with `data-reveal` and it eases up into place the first time it
+  comes into view (components/RevealOnScroll.tsx adds `is-revealed`). Siblings set
+  `--reveal-index` (lib/reveal.ts) to start 90ms apart.
+  Safe by construction: nothing is hidden until that script has started and added
+  `reveal-ready` to <html>, so content never stays invisible if JavaScript fails, and the
+  script never adds it for visitors who prefer reduced motion. Hiding is instant (no
+  transition); only the reveal animates. Only opacity and transform change, which the
+  browser can animate on the GPU without re-laying out the page.
+  Kept outside @layer on purpose: these classes are only added from JavaScript.
+*/
+.reveal-ready [data-reveal]:not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+.reveal-ready [data-reveal].is-revealed {
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--reveal-index, 0) * 90ms);
 }
 
 @layer utilities {

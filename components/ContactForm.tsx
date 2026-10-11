@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleAlert, CircleCheck, ChevronDown, LoaderCircle, Phone } from 'lucide-react';
@@ -11,13 +11,14 @@ import {
   type ContactApiResponse,
   type ContactFormValues,
 } from '@/lib/contactSchema';
+import { SERVICE_PICK_EVENT } from '@/lib/servicePick';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 const inputClasses =
-  'block min-h-6 w-full rounded-md border bg-paper-50 px-2 py-1.5 text-base text-ink-900 placeholder:text-ink-500 transition-colors hover:border-ink-600 disabled:opacity-60';
+  'block min-h-6 w-full rounded-md border bg-paper-50 px-2 py-1.5 text-base text-ink-900 placeholder:text-ink-500 transition-colors hover:border-ink-600 focus:border-brass-600 disabled:opacity-60';
 
 interface FieldProps {
   id: string;
@@ -72,11 +73,17 @@ export function ContactForm() {
   const successRef = useRef<HTMLDivElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
 
+  // Field ids are prefixed with an id unique to this form, so they can never clash with
+  // another id on the page.
+  const uid = useId();
+  const fieldId = (name: keyof ContactFormValues) => `${uid}-${name}`;
+
   const {
     register,
     handleSubmit,
     reset,
     setError,
+    setValue,
     formState: { errors },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -89,6 +96,18 @@ export function ContactForm() {
     if (status === 'success') successRef.current?.focus();
     if (status === 'error') errorRef.current?.focus();
   }, [status]);
+
+  // "Get a quote" on a service card pre-selects that service.
+  useEffect(() => {
+    const onPick = (event: Event) => {
+      const service = (event as CustomEvent<unknown>).detail;
+      if (typeof service === 'string' && serviceOptions.includes(service)) {
+        setValue('service', service, { shouldValidate: true, shouldDirty: true });
+      }
+    };
+    window.addEventListener(SERVICE_PICK_EVENT, onPick);
+    return () => window.removeEventListener(SERVICE_PICK_EVENT, onPick);
+  }, [setValue]);
 
   async function onSubmit(values: ContactFormValues) {
     setStatus('submitting');
@@ -135,7 +154,7 @@ export function ContactForm() {
         className="rounded-md border border-success bg-paper-50 p-3 outline-none motion-safe:animate-fade-in lg:p-4"
       >
         <CircleCheck aria-hidden="true" strokeWidth={1.5} className="h-5 w-5 text-success" />
-        <h3 className="mt-2 text-h3 text-ink-900">{contactSection.successTitle}</h3>
+        <p className="mt-2 font-heading text-h3 font-semibold text-ink-900">{contactSection.successTitle}</p>
         <p className="mt-1 text-tone-muted">{contactSection.successBody}</p>
         <div className="mt-3 flex flex-col gap-1.5 xs:flex-row">
           <Button href={`tel:${contact.phone.href}`}>
@@ -154,14 +173,13 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate aria-busy={submitting} className="space-y-3">
-      <Field id="name" label="Your name" error={errors.name?.message}>
-        {(control) => (
-          <input {...control} type="text" autoComplete="name" placeholder="Full name" {...register('name')} />
-        )}
-      </Field>
-
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field id="phone" label="Phone number" error={errors.phone?.message}>
+        <Field id={fieldId('name')} label="Your name" error={errors.name?.message}>
+          {(control) => (
+            <input {...control} type="text" autoComplete="name" placeholder="Full name" {...register('name')} />
+          )}
+        </Field>
+        <Field id={fieldId('phone')} label="Phone number" error={errors.phone?.message}>
           {(control) => (
             <input
               {...control}
@@ -173,21 +191,22 @@ export function ContactForm() {
             />
           )}
         </Field>
-        <Field id="email" label="Email" optional error={errors.email?.message}>
-          {(control) => (
-            <input
-              {...control}
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              {...register('email')}
-            />
-          )}
-        </Field>
       </div>
 
-      <Field id="service" label="Service needed" error={errors.service?.message}>
+      <Field id={fieldId('email')} label="Email" optional error={errors.email?.message}>
+        {(control) => (
+          <input
+            {...control}
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            {...register('email')}
+          />
+        )}
+      </Field>
+
+      <Field id={fieldId('service')} label="Service needed" error={errors.service?.message}>
         {(control) => (
           <div className="relative">
             <select {...control} defaultValue="" className={cn(control.className, 'pr-5')} {...register('service')}>
@@ -210,7 +229,7 @@ export function ContactForm() {
       </Field>
 
       <Field
-        id="location"
+        id={fieldId('location')}
         label="Location of the site"
         hint="The area and city where you need guards."
         error={errors.location?.message}
@@ -220,7 +239,7 @@ export function ContactForm() {
         )}
       </Field>
 
-      <Field id="message" label="Anything we should know?" optional error={errors.message?.message}>
+      <Field id={fieldId('message')} label="Anything we should know?" optional error={errors.message?.message}>
         {(control) => (
           <textarea
             {...control}
@@ -234,8 +253,8 @@ export function ContactForm() {
 
       {/* Honeypot: hidden from people. Bots that fill every field give themselves away. */}
       <div aria-hidden="true" className="hidden">
-        <label htmlFor="website">Leave this field empty</label>
-        <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
+        <label htmlFor={fieldId('website')}>Leave this field empty</label>
+        <input id={fieldId('website')} type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
 
       {status === 'error' ? (
