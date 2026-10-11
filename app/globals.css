@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------------------------------------------------------------------------- */
+/* Tone tokens: the colour roles that change with the section background.     */
+/* Components use text-tone-fg, border-tone-rule etc. and adapt automatically. */
+/* -------------------------------------------------------------------------- */
+:root,
+.tone-light {
+  --tone-bg: #f6f1e7; /* paper-100 */
+  --tone-fg: #101b27; /* ink-900 */
+  --tone-muted: #53657a; /* ink-500, 5.3:1 on paper */
+  --tone-accent: #775519; /* brass-700, 6.0:1 on paper */
+  --tone-rule: #d8ceb9;
+  --tone-surface: #fbf9f4; /* paper-50 */
+  --focus-ring: #775519;
+}
+
+.tone-sand {
+  --tone-bg: #ece5d5; /* paper-200 */
+  --tone-fg: #101b27;
+  --tone-muted: #46586c; /* a touch darker than ink-500 for 6:1 on sand */
+  --tone-accent: #6e4e16;
+  --tone-rule: #cdc1a6;
+  --tone-surface: #f6f1e7;
+  --focus-ring: #775519;
+}
+
+.tone-dark {
+  --tone-bg: #101b27; /* ink-900 */
+  --tone-fg: #f6f1e7;
+  --tone-muted: #a8b5c3; /* ink-300, 8.3:1 on navy */
+  --tone-accent: #ddbe80; /* brass-300, 9.7:1 on navy */
+  --tone-rule: #2a3a4b;
+  --tone-surface: #182635; /* ink-800 */
+  --focus-ring: #ddbe80;
+}
+
+/* Page gutter that lines up with the 1200px container: used by the contact split. */
+:root {
+  --edge: 16px;
+}
+@media (min-width: 640px) {
+  :root {
+    --edge: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --edge: max(32px, calc((100vw - 75rem) / 2 + 32px));
+  }
+}
+
+@layer base {
+  html {
+    /* Anchor scrolling is eased in JavaScript (components/SmoothAnchors.tsx), which needs the
+       browser's own smooth scrolling OFF or the two would fight each other. */
+    scroll-padding-top: 88px; /* sticky header height + breathing room */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper-100 font-sans text-base text-ink-900 antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif font-medium text-balance;
+    /* Fraunces' "wonky" alternates are switched off to keep the headings sober. */
+    font-variation-settings: 'WONK' 0;
+  }
+
+  .font-serif {
+    font-variation-settings: 'WONK' 0;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Sections are focused (without a ring) after an in-page link so keyboard users land there. */
+  section[tabindex='-1']:focus {
+    outline: none;
+  }
+
+  ::selection {
+    background: #ddbe80;
+    color: #0a121b;
+  }
+
+  /* Remove the number-input spinners and other browser chrome we do not use. */
+  select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+@layer components {
+  /*
+    A panel that eases open and shut (mobile menu, FAQ answers). It animates its grid row between
+    0fr and 1fr, so no height has to be measured. Visibility is the subtle part: it flips to visible
+    INSTANTLY on open (so keyboard focus can land inside straight away) but only hides AFTER the
+    closing animation has finished (so the content does not vanish mid-fade). Hidden panels are
+    `visibility: hidden`, which also removes their contents from the tab order and the
+    accessibility tree. Set data-open="true" to open it.
+  */
+  .collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.5s;
+  }
+  .collapsible[data-open='true'] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+}
+
+@layer utilities {
+  .pl-edge {
+    padding-left: var(--edge);
+  }
+  .pr-edge {
+    padding-right: var(--edge);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsible {
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
