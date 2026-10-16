@@ -151,11 +151,18 @@ const config: Config = {
           from: { opacity: '0', transform: 'scale(1.03)' },
           to: { opacity: '1', transform: 'none' },
         },
+        // The client strip: the track holds two identical copies, so sliding it half its own
+        // width and starting again is seamless.
+        marquee: {
+          from: { transform: 'translate3d(0, 0, 0)' },
+          to: { transform: 'translate3d(-50%, 0, 0)' },
+        },
       },
       animation: {
         rise: 'rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both',
         'fade-in': 'fade-in 0.45s ease-out both',
         settle: 'settle 1.2s cubic-bezier(0.22, 1, 0.36, 1) both',
+        marquee: 'marquee 48s linear infinite',
       },
     },
   },

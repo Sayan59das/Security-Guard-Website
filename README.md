@@ -2,7 +2,7 @@
 
 A single-page marketing site for a private security guard company in India. Its one job is to get a visitor to **request a quote or call**. It is built to feel calm and credible, not flashy, because most visitors are worried or in a hurry.
 
-Sections, in order: sticky header, hero, services, why choose us, how it works, industries, testimonials, FAQ, contact form with details and map, footer.
+Sections, in order: sticky header (with a Services dropdown), hero, services, impact figures (animated counters), why choose us, technology spotlight, how it works, industries, client strip, testimonials (sideways carousel), call-to-action band, FAQ, contact form with details and map, footer. A separate `/privacy-policy` page holds the privacy policy.
 
 > **Before you launch:** the company name, phone, email, address, photos, licence number, statistics and testimonials are all **placeholders**. See [Pre-launch checklist](#pre-launch-checklist).
 
@@ -29,17 +29,21 @@ No other runtime dependencies. A three-line helper (`lib/cn.ts`) replaces `clsx`
 ├── app/
 │   ├── layout.tsx            Fonts, metadata, header/footer, structured data
 │   ├── page.tsx              Puts the sections in order
+│   ├── privacy-policy/       The privacy policy page (text lives in content/siteContent.ts)
 │   ├── globals.css           Tone tokens, focus ring, collapsible panels, scroll reveal, reduced-motion rules
 │   ├── api/contact/route.ts  Form endpoint: validation, honeypot, rate limit, email
 │   ├── sitemap.ts, robots.ts Search engine files
 │   └── icon.svg, apple-icon.png   Favicon and touch icon
 ├── components/
-│   ├── sections/             Hero, Services, WhyUs, HowItWorks, Industries,
-│   │                         Testimonials, CtaBand, FAQ, Contact
+│   ├── sections/             Hero, Services, Impact, WhyUs, TechSpotlight, HowItWorks,
+│   │                         Industries, Clients, Testimonials, CtaBand, FAQ, Contact
 │   ├── layout/               TopBar, Header (with mobile menu), Footer, MobileActionBar
 │   ├── ui/                   Container, Section, SectionHeading, Button, Icon, Logo, PlaceholderTag
 │   ├── ContactForm.tsx       The quote form in the contact section
 │   ├── ServiceCard.tsx, ServiceQuoteLink.tsx, FAQItem.tsx, MapPlaceholder.tsx, JsonLd.tsx
+│   ├── CountUp.tsx           Number that counts up when it scrolls into view (Impact section)
+│   ├── ClientMarquee.tsx     Endless client strip with a Pause button
+│   ├── TestimonialCarousel.tsx  Snap-scrolling testimonial row with Previous / Next
 │   ├── RevealOnScroll.tsx    Eases `data-reveal` blocks into place as they scroll into view
 │   └── SmoothAnchors.tsx     Eased scrolling for in-page links
 ├── content/
@@ -122,8 +126,12 @@ To use a real map, paste the `src` from Google Maps, Share, Embed a map into `co
 
 - [ ] Company name, service area, phone, email, address and opening hours in `content/siteContent.ts`
 - [ ] Licence or registration number in the footer (only if you hold one; leave nothing invented)
-- [ ] Hero figures: set real numbers and `placeholder: false` (the "Sample figures" note then disappears)
-- [ ] Testimonials: replace all three with real quotes, with permission, then `placeholder: false`
+- [ ] Impact figures (`impact.stats`): set real numbers and `placeholder: false` on each (the "Sample figures" note then disappears)
+- [ ] Clients (`clients`): real client names, with their permission, and `placeholder: false` (or delete the entries)
+- [ ] Technology section (`techSpotlight`): keep only what you really provide; the "sample shift report" is an illustration
+- [ ] Social links (`footer.social`): paste the real address of each page you have (empty ones are hidden)
+- [ ] Privacy policy (`privacyPolicy`): add the date, and have it checked against your own practice and the Digital Personal Data Protection Act, 2023
+- [ ] Testimonials: replace all six with real quotes, with permission, then `placeholder: false` (delete any you do not have)
 - [ ] Every item tagged `REVIEW` confirmed as true for your company
 - [ ] Photos: replace the two files in `public/images/placeholders/` (keep the filenames, or update the paths and `alt` text in the content file)
 - [ ] Logo: replace `components/ui/Logo.tsx` and `app/icon.svg` / `app/apple-icon.png`
@@ -140,7 +148,7 @@ Uniform navy and badge brass, built to turn a worried visitor into a call or a q
 - **Spacing:** strict 8px system. In this project's Tailwind theme, `p-2` is **16px** and `py-12` is **96px** (the key is the number of 8px steps). Max content width 1200px.
 - **Shape:** radius by hierarchy (4px controls, 6px fields, 10px cards); one shadow for the contact form, one for the mobile menu and call bar.
 - **Layout:** left aligned, nothing layered over photos. A split hero (headline and buttons left, framed photo right), split section headings, white cards on paper, and one brass "replacement guarantee" panel as the section highlight.
-- **Motion:** a staggered hero entrance, sections that ease into place as they scroll into view, header shadow on scroll, card hover lift and eased in-page scrolling. Only opacity and transform are animated (smooth on low-end phones); all off under `prefers-reduced-motion`.
+- **Motion:** a staggered hero entrance, sections that ease into place as they scroll into view, counters that count up, a slow client strip (with a Pause button), a testimonial carousel, header shadow on scroll, card hover lift and eased in-page scrolling. Only opacity and transform are animated (smooth on low-end phones); all off under `prefers-reduced-motion`.
 
 ## Scripts reference
 

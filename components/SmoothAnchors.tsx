@@ -46,9 +46,17 @@ export function SmoothAnchors() {
 
     const onClick = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const anchor = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
-      const hash = anchor?.getAttribute('href');
-      if (!anchor || !hash || hash.length < 2) return;
+      const anchor = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"], a[href^="/#"]');
+      let hash = anchor?.getAttribute('href');
+      if (!anchor || !hash) return;
+      // "/#contact" (used so the same link also works from other pages) means "#contact" when we
+      // are already on the home page. From any other page it is left to the browser, which loads
+      // the home page and jumps to the section.
+      if (hash.startsWith('/')) {
+        if (window.location.pathname !== '/') return;
+        hash = hash.slice(1);
+      }
+      if (hash.length < 2) return;
 
       const target = document.getElementById(decodeURIComponent(hash.slice(1)));
       if (!target) return;

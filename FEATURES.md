@@ -21,22 +21,34 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 ### Header
 - [x] Top bar on large screens with office hours, email and phone
 - [x] Sticky header with logo, six anchor links centred on the page, a call button and a "Request a Quote" button
+- [x] "Services" dropdown (hover, click or Enter): pick a service and the quote form opens with it already chosen; Escape closes it
+- [x] The link for the section being read is highlighted (home page only)
 - [x] Mobile menu that eases open and shut: opens with Enter or Space, Tab moves straight into the links, Escape closes it and returns focus, a link choice or outside click closes it
 
 ### Hero
 - [x] Clean split with nothing overlapping: headline, one supporting sentence and two CTAs (Request a Quote, Call) on the left, the photo in a brass-edged frame on the right (below the buttons on phones)
-- [x] Three trust figures in a band at the bottom, clearly marked as sample figures until replaced
+- [x] A strip of three promises under the hero (background-checked guards, supervisor visits, replacement), taken from "Why choose us"
 - [ ] Real photo (placeholder file in use; at least 1200 x 1200, guard near the centre)
-- [ ] Real trust figures (placeholders in use)
+- [ ] Owner has confirmed the three promises in the strip are true (`REVIEW` tag)
 
 ### Services
 - [x] Six services with icon, title and short description: residential, commercial/office, event, industrial/warehouse, night patrol and gatekeeping, personal/VIP
 - [x] White cards with a navy icon tile
 - [x] "Get a quote" on each card jumps to the form with that service already chosen
 
+### Impact
+- [x] Six figures (years, branches, clients, sites, trained guards, cities) in white tiles, each with an icon and a number that counts up the first time it scrolls into view
+- [x] The final number is in the server-rendered HTML, so it shows without JavaScript and for visitors who prefer reduced motion; screen readers hear the final number once
+- [x] Clearly marked "Sample figures" until `placeholder: false`
+- [ ] Real figures (round sample numbers in use)
+
 ### Why choose us
 - [x] Five points: verified guards, training and uniforms, fast deployment, supervisor visits, replacement guarantee (shown as the brass highlight)
 - [ ] Owner has confirmed each point is true for the business (`REVIEW` tags)
+
+### Technology spotlight
+- [x] Pitch and four points (logged patrol rounds, shift reports, CCTV and alarm support, incident alerts) beside a "sample shift report" card, labelled as an illustration
+- [ ] Owner has confirmed which of these they really provide (`REVIEW` tag)
 
 ### How it works
 - [x] Four steps as a numbered timeline beside the photo (the photo stays in view on large screens)
@@ -45,8 +57,12 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 ### Industries
 - [x] Ten industries as tiles, each with an icon and a one-line note
 
+### Clients
+- [x] Slow endless strip of client tiles with a visible Pause / Play button (WCAG 2.2.2), also pausing on hover; a still, wrapped grid for visitors who prefer reduced motion
+- [ ] Real client names, with permission (placeholders in use; logos can be added later)
+
 ### Testimonials
-- [x] Three sample testimonials in white panels, each with a visible "Placeholder" tag until `placeholder: false`
+- [x] Six sample testimonials in a sideways-scrolling row (swipe, trackpad, keyboard, or Previous / Next buttons): three visible on a wide screen, one on a phone, each with a visible "Placeholder" tag until `placeholder: false`
 - [ ] Real testimonials, with permission
 
 ### Call-to-action band
@@ -71,7 +87,12 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 - [x] Map placeholder, with support for a real Google Maps embed through `contact.mapEmbedUrl`
 
 ### Footer
-- [x] Four columns: about line and licence / registration placeholder, quick links, services, contact details; copyright and "Back to top"
+- [x] Four columns: about line, licence / registration placeholder and social links, quick links with a Policy group, services, contact details; copyright and "Back to top"
+- [x] Social links appear only for addresses filled in `footer.social`, so no link points nowhere
+
+### Privacy policy
+- [x] `/privacy-policy` page, written from what the site actually does (form fields, email delivery, hosting, no analytics or ad cookies), linked from the footer and under the quote form, and listed in the sitemap
+- [ ] Date added and text checked by someone qualified (`REVIEW` tag)
 
 ### SEO and sharing
 - [x] Page title, description, canonical URL
@@ -95,7 +116,6 @@ A box is ticked only if the feature exists in the code and was checked. Anything
 
 Smaller ideas worth considering:
 
-- [ ] Highlight the current section in the header navigation
 - [ ] Shared rate-limit store (Upstash Redis) and a CAPTCHA if spam appears
 - [ ] Automated end-to-end tests (Playwright) for the form and menu
 - [ ] Content-Security-Policy with nonces
@@ -107,7 +127,7 @@ Measured on a local production build (`next build` then `next start`), Lighthous
 ### Performance
 - Target: Lighthouse performance 90 or higher, layout shift under 0.1, no long main-thread blocking
 - Measured: performance **99**, cumulative layout shift **0**, total blocking time **0 ms**, first contentful paint 0.9 s, largest contentful paint 2.1 s
-- First-load JavaScript for the page: 124 kB (no animation library; all motion is CSS plus one small IntersectionObserver)
+- First-load JavaScript for the page: 135 kB (no animation library; all motion is CSS plus small IntersectionObserver scripts). It was 124 kB before the impact counters, client strip, carousel and Services dropdown were added; the Lighthouse figures below pre-date that change.
 - Smoothness, measured on the current design in headless Chrome with the CPU slowed 4x: layout shift **0** at 1440px and 390px, **100%** of frames on time (60fps) while scrolling the whole page, 7 ms of main-thread blocking on the phone profile
 - The Lighthouse figures above were taken on the first version of the design; run Lighthouse again before launch
 - Fonts are self-hosted through `next/font` with `display: swap`; images are served as WebP through `next/image` with explicit sizes

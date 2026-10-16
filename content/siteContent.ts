@@ -38,7 +38,14 @@ export type IconName =
   | 'school'
   | 'hospital'
   | 'hard-hat'
-  | 'parking';
+  | 'parking'
+  | 'users'
+  | 'map-pinned'
+  | 'landmark'
+  | 'route'
+  | 'file-check'
+  | 'camera'
+  | 'bell';
 
 export interface NavItem {
   label: string;
@@ -92,10 +99,38 @@ export interface FaqEntry {
 }
 
 export interface Stat {
-  value: string;
+  /** The number the counter counts up to. */
+  value: number;
+  /** Shown straight after the number, for example "+". */
+  suffix?: string;
   label: string;
-  /** While true, the hero shows a small "sample figures" note. */
+  icon: IconName;
+  /** While true, the section shows a "Sample figures" note. */
   placeholder: boolean;
+}
+
+export interface ClientItem {
+  name: string;
+  /** What kind of client it is, shown small under the name. */
+  kind: string;
+  /** While true, the client strip shows a "Placeholder" note. */
+  placeholder: boolean;
+}
+
+export interface TrustItem {
+  label: string;
+  icon: IconName;
+}
+
+export interface SocialLink {
+  label: string;
+  /** Leave empty to hide the link. Paste the full page address when the account exists. */
+  href: string;
+}
+
+export interface PolicySection {
+  title: string;
+  body: string[];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -152,16 +187,18 @@ export const contact = {
 /* Navigation                                                                 */
 /* -------------------------------------------------------------------------- */
 
+// Links start with "/#" (not just "#") so they also work from other pages, such as the
+// privacy policy. On the home page they scroll in place (see components/SmoothAnchors.tsx).
 export const nav: NavItem[] = [
-  { label: 'Services', href: '#services' },
-  { label: 'Why us', href: '#why-us' },
-  { label: 'How it works', href: '#how-it-works' },
-  { label: 'Industries', href: '#industries' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Why us', href: '/#why-us' },
+  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'Industries', href: '/#industries' },
+  { label: 'FAQ', href: '/#faq' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
-export const quoteCta = { label: 'Request a Quote', href: '#contact' } as const;
+export const quoteCta = { label: 'Request a Quote', href: '/#contact' } as const;
 
 /* -------------------------------------------------------------------------- */
 /* SEO                                                                        */
@@ -203,14 +240,112 @@ export const hero = {
     width: 1200,
     height: 1200,
   } satisfies ImageContent,
-  // PLACEHOLDER: these are NOT real figures. Replace with your own true numbers,
-  // then set `placeholder: false` on each so the sample-figures note disappears.
+  // REVIEW: the strip under the hero. Each item repeats a promise from "Why choose us" below,
+  // so confirm those are true for your company.
+  trust: [
+    { label: 'Background-checked guards', icon: 'badge-check' },
+    { label: 'Supervisor visits on a schedule', icon: 'clipboard-check' },
+    { label: 'Replacement if a guard is not right', icon: 'refresh' },
+  ] satisfies TrustItem[],
+} as const;
+
+/* -------------------------------------------------------------------------- */
+/* Impact (animated counters)                                                 */
+/* -------------------------------------------------------------------------- */
+
+export const impact = {
+  eyebrow: 'Our impact',
+  title: 'The size of the job, in numbers.',
+  intro: 'A few figures that show how much ground we cover, so you know what stands behind the guard at your gate.',
+  // PLACEHOLDER: these are NOT real figures. They are round sample numbers so the counters have
+  // something to count to. Replace each with your own true number, then set `placeholder: false`
+  // on every one so the "Sample figures" note disappears. Never publish a number you cannot prove.
   stats: [
-    { value: '00+', label: 'Guards deployed', placeholder: true },
-    { value: '00', label: 'Sites protected', placeholder: true },
-    { value: '00', label: 'Years in business', placeholder: true },
+    { value: 10, suffix: '+', label: 'Years in business', icon: 'calendar', placeholder: true },
+    { value: 5, label: 'Branch offices', icon: 'building', placeholder: true },
+    { value: 50, suffix: '+', label: 'Clients served', icon: 'users', placeholder: true },
+    { value: 100, suffix: '+', label: 'Sites protected', icon: 'map-pinned', placeholder: true },
+    { value: 500, suffix: '+', label: 'Trained guards and staff', icon: 'user-check', placeholder: true },
+    { value: 3, label: 'Cities covered', icon: 'landmark', placeholder: true },
   ] satisfies Stat[],
 } as const;
+
+/* -------------------------------------------------------------------------- */
+/* Technology spotlight                                                       */
+/* -------------------------------------------------------------------------- */
+
+// REVIEW: this section describes how your company works. Keep only what you really provide, and
+// delete the rest. The "sample report" card is an illustration, not a real client's report.
+export const techSpotlight = {
+  eyebrow: 'Technology',
+  title: 'A guard you can check on, not just trust.',
+  intro:
+    'Good guarding leaves a record. Where a site needs it, we back the guard with simple tools so you can see what happened and when, without having to ask.',
+  points: [
+    {
+      title: 'Logged patrol rounds',
+      description: 'Rounds are ticked off at fixed checkpoints and written to the log with the time.',
+      icon: 'route',
+    },
+    {
+      title: 'Shift reports',
+      description: 'A short report of attendance, rounds and visitors after each shift, shared with you.',
+      icon: 'file-check',
+    },
+    {
+      title: 'CCTV and alarm support',
+      description: 'We watch and respond to the cameras and alarms you already have, or help you plan new ones.',
+      icon: 'camera',
+    },
+    {
+      title: 'Incident alerts',
+      description: 'Anything out of the ordinary is reported to you and your supervisor straight away.',
+      icon: 'bell',
+    },
+  ] satisfies Array<{ title: string; description: string; icon: IconName }>,
+  cta: { label: 'Ask about options', href: '#contact' },
+  sample: {
+    title: 'Sample shift report',
+    note: 'Illustration only. Not a real client.',
+    rows: [
+      { label: 'Site', value: '[Site name]' },
+      { label: 'Shift', value: 'Night, 8:00 pm to 8:00 am' },
+      { label: 'Guard on duty', value: '[Guard name], ID checked' },
+      { label: 'Attendance', value: 'On time' },
+    ],
+    rounds: [
+      { place: 'Main gate', time: '9:00 pm' },
+      { place: 'Parking level', time: '11:00 pm' },
+      { place: 'Back lane', time: '1:00 am' },
+      { place: 'Main gate', time: '3:00 am' },
+    ],
+    incidents: 'No incidents. Supervisor check at 12:30 am.',
+  },
+} as const;
+
+/* -------------------------------------------------------------------------- */
+/* Clients                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export const clientsSection = {
+  eyebrow: 'Trusted by',
+  title: 'Places that rely on us.',
+} as const;
+
+// PLACEHOLDER: these are made-up names. Replace each with a real client that has agreed to be
+// named (or delete it), then set `placeholder: false`. To show a logo instead of the name, put the
+// file in public/images/clients/ and add a `logo` field in components/sections/Clients.tsx.
+export const clients: ClientItem[] = [
+  { name: '[Client one]', kind: 'Housing society', placeholder: true },
+  { name: '[Client two]', kind: 'Retail chain', placeholder: true },
+  { name: '[Client three]', kind: 'Manufacturing', placeholder: true },
+  { name: '[Client four]', kind: 'School', placeholder: true },
+  { name: '[Client five]', kind: 'Hospital', placeholder: true },
+  { name: '[Client six]', kind: 'Logistics', placeholder: true },
+  { name: '[Client seven]', kind: 'Office park', placeholder: true },
+  { name: '[Client eight]', kind: 'Banquet venue', placeholder: true },
+];
+
 /* -------------------------------------------------------------------------- */
 /* Services                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -410,6 +545,27 @@ export const testimonials: Testimonial[] = [
     role: 'Plant manager, [Factory name]',
     placeholder: true,
   },
+  {
+    quote:
+      'We were nervous about handing the school gate to an outside agency. Parents now say the pick-up queue has never been calmer.',
+    name: '[Client name]',
+    role: 'Administrator, [School name]',
+    placeholder: true,
+  },
+  {
+    quote:
+      'For our wedding season they walked the hall with us first and then planned the parking and entry. Nothing went wrong, which is the point.',
+    name: '[Client name]',
+    role: 'Manager, [Banquet hall name]',
+    placeholder: true,
+  },
+  {
+    quote:
+      'The shift report arrives every morning. I no longer phone the night guard to ask whether the rounds were done.',
+    name: '[Client name]',
+    role: 'Facility head, [Office park name]',
+    placeholder: true,
+  },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -480,6 +636,7 @@ export const contactSection = {
     'Fill in the form and we will call you back to talk it through. If it cannot wait, call us now.',
   formTitle: 'Your details',
   formNote: 'We only use your details to reply to this enquiry.',
+  privacyLinkLabel: 'Read our privacy policy',
   submitLabel: 'Send my request',
   successTitle: 'Thank you, we have your request.',
   successBody: 'We will call you on the number you gave us. If it is urgent, please call us directly.',
@@ -499,4 +656,75 @@ export const serviceOptions: string[] = [
 
 export const footer = {
   about: `${company.name} supplies trained, verified security guards to homes, businesses, factories and events.`,
+  // PLACEHOLDER: paste the full address of each page you really have. A link with an empty
+  // address is not shown, so nothing points nowhere.
+  social: [
+    { label: 'Facebook', href: '' },
+    { label: 'Instagram', href: '' },
+    { label: 'LinkedIn', href: '' },
+    { label: 'YouTube', href: '' },
+    { label: 'X', href: '' },
+  ] satisfies SocialLink[],
+} as const;
+
+/* -------------------------------------------------------------------------- */
+/* Privacy policy page (/privacy-policy)                                      */
+/* -------------------------------------------------------------------------- */
+
+// REVIEW: this is a plain-language draft written from what the site actually does (see the
+// code in app/api/contact and lib/sendEnquiry.ts). Have it checked against the Digital Personal
+// Data Protection Act, 2023 and your own practice by someone qualified before launch, and
+// update it whenever you add analytics, cookies or any new way of collecting details.
+export const privacyPolicy = {
+  title: 'Privacy policy',
+  // PLACEHOLDER: the date you publish or last change this page.
+  updated: '[Date]',
+  intro: `This page explains what ${company.name} does with the details you give us through this website.`,
+  sections: [
+    {
+      title: 'What we collect',
+      body: [
+        'When you send the quote form we collect the name, phone number, service, location and message you type in, and your email address if you choose to give it.',
+        'Our servers also keep short technical records, such as the time of a request, which our hosting provider may store for security and troubleshooting.',
+        'This website does not use advertising trackers or analytics cookies.',
+      ],
+    },
+    {
+      title: 'How we use it',
+      body: [
+        'We use your details only to reply to your enquiry, to prepare a quote, and to arrange a site visit if you ask for one.',
+        'We do not sell your details, and we do not use them for unrelated marketing.',
+      ],
+    },
+    {
+      title: 'Who else handles it',
+      body: [
+        'Your enquiry is delivered to us by email through an email delivery service, and the website is run on a hosting provider. They handle your details only to provide those services.',
+        'If a map is shown on this site, it is provided by Google, which may set its own cookies. We do not control those.',
+        'We may also share details where the law requires it.',
+      ],
+    },
+    {
+      title: 'How long we keep it',
+      body: [
+        'We keep an enquiry for as long as it takes to deal with it, and for a reasonable period afterwards in case you come back to us or we need the record. If you become a client, we keep your details under the terms of your contract.',
+      ],
+    },
+    {
+      title: 'Your choices',
+      body: [
+        'You can ask us to show you the details we hold about you, correct them, or delete them. Email or call us using the details below and we will respond.',
+      ],
+    },
+    {
+      title: 'How we protect it',
+      body: [
+        'The site is served over HTTPS, the form is checked and rate-limited to reduce abuse, and enquiries are delivered only to the people who handle them. No system is perfectly secure, so please do not send sensitive information such as bank or identity numbers through the form.',
+      ],
+    },
+    {
+      title: 'Contact us about privacy',
+      body: ['For any question about this page, use the phone number or email address shown on this website.'],
+    },
+  ] satisfies PolicySection[],
 } as const;

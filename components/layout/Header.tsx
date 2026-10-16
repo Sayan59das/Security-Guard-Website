@@ -1,13 +1,23 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Menu, Phone, X } from 'lucide-react';
-import { contact, nav, quoteCta } from '@/content/siteContent';
+import { usePathname } from 'next/navigation';
+import { ChevronDown, Menu, Phone, X } from 'lucide-react';
+import { contact, nav, quoteCta, services } from '@/content/siteContent';
+import { pickService } from '@/lib/servicePick';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/cn';
 
 const MENU_ID = 'mobile-menu';
+const SERVICES_MENU_ID = 'services-menu';
+
+/** The nav link whose panel is a dropdown listing every service. */
+const DROPDOWN_HREF = '/#services';
+
+/** "/#faq" -> "faq": the id of the section a nav link points to. */
+const sectionId = (href: string) => href.replace(/^\/?#/, '');
 
 /**
  * Symmetrical by construction: on desktop the header is a three-part grid (1fr / auto / 1fr),
@@ -42,6 +52,62 @@ export function Header() {
     };
   }, [open]);
 
+  // Desktop "Services" dropdown: opens on hover (mouse) or on click / Enter / Space, closes on
+  // Escape (focus returns to its button), on a click outside, or when focus leaves it.
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesRef = useRef<HTMLLIElement>(null);
+  const servicesButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!servicesOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setServicesOpen(false);
+        servicesButtonRef.current?.focus();
+      }
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (servicesRef.current && !servicesRef.current.contains(event.target as Node)) setServicesOpen(false);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('pointerdown', onPointerDown);
+    };
+  }, [servicesOpen]);
+
+  // Highlight the nav link of the section the visitor is reading. Only on the home page, where
+  // those sections exist. A section counts while it crosses a thin band a little above the
+  // middle of the screen; between nav sections nothing is highlighted.
+  const pathname = usePathname();
+  const [activeId, setActiveId] = useState('');
+  useEffect(() => {
+    if (pathname !== '/') {
+      setActiveId('');
+      return;
+    }
+    const sections = nav
+      .map((item) => document.getElementById(sectionId(item.href)))
+      .filter((element): element is HTMLElement => element !== null);
+    if (sections.length === 0 || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          if (entry.isIntersecting) setActiveId(id);
+          else setActiveId((current) => (current === id ? '' : current));
+        }
+      },
+      { rootMargin: '-40% 0px -55% 0px' },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [pathname]);
+
   // A soft shadow once the page has scrolled, so the header separates from the content
   // passing under it. One passive listener, at most one state change per frame.
   const [scrolled, setScrolled] = useState(false);
@@ -72,6 +138,21 @@ export function Header() {
     return () => desktop.removeEventListener('change', onChange);
   }, []);
 
+  const linkClass = (active: boolean) =>
+    cn(
+      'relative inline-flex items-center gap-0.5 py-0.5 text-sm font-medium transition-colors hover:text-tone-fg',
+      active ? 'text-tone-fg' : 'text-tone-muted',
+    );
+  const underline = (active: boolean) => (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'absolute inset-x-0 -bottom-0.5 h-[2px] origin-left bg-brass-300 transition-transform duration-300',
+        active ? 'scale-x-100' : 'scale-x-0',
+      )}
+    />
+  );
+
   return (
     <header
       ref={headerRef}
@@ -87,13 +168,92 @@ export function Header() {
 
         <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-4">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className="text-sm font-medium text-tone-muted transition-colors hover:text-tone-fg">
-                  {item.label}
-                </a>
-              </li>
-            ))}
+            {nav.map((item) => {
+              const active = activeId === sectionId(item.href);
+
+              if (item.href !== DROPDOWN_HREF) {
+                return (
+                  <li key={item.href}>
+                    <a href={item.href} aria-current={active ? 'location' : undefined} className={linkClass(active)}>
+                      {item.label}
+                      {underline(active)}
+                    </a>
+                  </li>
+                );
+              }
+
+              return (
+                <li
+                  key={item.href}
+                  ref={servicesRef}
+                  className="relative"
+                  onPointerEnter={(event) => event.pointerType === 'mouse' && setServicesOpen(true)}
+                  onPointerLeave={(event) => event.pointerType === 'mouse' && setServicesOpen(false)}
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) setServicesOpen(false);
+                  }}
+                >
+                  <button
+                    ref={servicesButtonRef}
+                    type="button"
+                    aria-expanded={servicesOpen}
+                    aria-controls={SERVICES_MENU_ID}
+                    // A keyboard press (detail 0) toggles; a mouse or touch click keeps it open, so a
+                    // click right after the hover-open does not slam it shut again.
+                    onClick={(event) => setServicesOpen((value) => (event.detail === 0 ? !value : true))}
+                    aria-current={active ? 'location' : undefined}
+                    className={linkClass(active)}
+                  >
+                    {item.label}
+                    <ChevronDown
+                      aria-hidden="true"
+                      strokeWidth={1.75}
+                      className={cn('h-2 w-2 transition-transform duration-300', servicesOpen && 'rotate-180')}
+                    />
+                    {underline(active)}
+                  </button>
+
+                  {servicesOpen ? (
+                    <div
+                      id={SERVICES_MENU_ID}
+                      className="absolute left-1/2 top-full z-50 w-[24rem] -translate-x-1/2 pt-2 motion-safe:animate-fade-in"
+                    >
+                      <div className="rounded-lg border border-tone-rule bg-ink-800 p-1 shadow-lift">
+                        <p className="px-1.5 pb-0.5 pt-1 text-sm text-tone-muted">Request a quote for:</p>
+                        <ul>
+                          {services.map((service) => (
+                            <li key={service.id}>
+                              <a
+                                href={quoteCta.href}
+                                onClick={() => {
+                                  pickService(service.title);
+                                  setServicesOpen(false);
+                                }}
+                                className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-sm font-medium text-tone-fg transition-colors hover:bg-ink-700"
+                              >
+                                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-tone-rule text-tone-accent">
+                                  <Icon name={service.icon} className="h-2 w-2" />
+                                </span>
+                                {service.title}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-1 border-t border-tone-rule pt-1">
+                          <a
+                            href={item.href}
+                            onClick={() => setServicesOpen(false)}
+                            className="block rounded-md px-1.5 py-1 text-sm font-semibold text-tone-accent transition-colors hover:bg-ink-700"
+                          >
+                            See all services
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         </nav>
 

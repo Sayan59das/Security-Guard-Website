@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { company, contact, footer, nav, quoteCta, services } from '@/content/siteContent';
 import { Container } from '@/components/ui/Container';
@@ -9,6 +10,8 @@ const linkClass = 'text-sm text-tone-muted transition-colors hover:text-tone-fg'
 export function Footer() {
   const year = new Date().getFullYear();
   const { address } = contact;
+  // Only links that have a real address are shown, so nothing points nowhere.
+  const social = footer.social.filter((item) => item.href.trim() !== '');
 
   return (
     <footer className="tone-dark bg-ink-950 text-tone-fg">
@@ -20,6 +23,23 @@ export function Footer() {
             <p className="mt-3 inline-flex rounded border border-tone-rule px-1.5 py-1 text-sm text-tone-muted">
               {company.licence.label}:&nbsp;<span className="text-tone-fg">{company.licence.value}</span>
             </p>
+            {social.length > 0 ? (
+              <ul aria-label="Social media" className="mt-3 flex flex-wrap gap-1">
+                {social.map((item) => (
+                  <li key={item.label}>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-5 items-center rounded border border-tone-rule px-1.5 text-sm font-semibold text-tone-muted transition-colors hover:border-tone-muted hover:text-tone-fg"
+                    >
+                      {item.label}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-2">
@@ -33,6 +53,14 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+            <h2 className={`${columnHeading} mt-4`}>Policy</h2>
+            <ul className="mt-2 space-y-1">
+              <li>
+                <Link href="/privacy-policy" className={linkClass}>
+                  Privacy policy
+                </Link>
+              </li>
+            </ul>
           </nav>
 
           <div className="lg:col-span-3">
@@ -40,7 +68,7 @@ export function Footer() {
             <ul className="mt-2 space-y-1">
               {services.map((service) => (
                 <li key={service.id}>
-                  <a href="#services" className={linkClass}>
+                  <a href="/#services" className={linkClass}>
                     {service.title}
                   </a>
                 </li>

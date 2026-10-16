@@ -69,7 +69,7 @@ Page gutters: 16px (mobile), 24px (sm), 32px (lg). Section padding: 64px (mobile
 
 ### Section rhythm (background sequence)
 
-Top bar deep navy → Header navy → **Hero** navy photo → **Services** paper → **Why us** navy → **How it works** sand → **Industries** paper → **Testimonials** sand → **Call-to-action band** navy → **FAQ** paper → **Contact** navy/paper split → **Footer** deep navy.
+Top bar deep navy → Header navy → **Hero** navy photo → **Services** paper → **Impact** sand → **Why us** navy → **Technology** paper → **How it works** sand → **Industries** paper → **Clients** paper strip (hairlines above and below) → **Testimonials** sand → **Call-to-action band** navy → **FAQ** paper → **Contact** navy/paper split → **Footer** deep navy.
 
 ### Motion tokens
 
@@ -85,6 +85,9 @@ Top bar deep navy → Header navy → **Hero** navy photo → **Services** paper
 | Button press | 1px down while pressed | `<Button>` |
 | Header shadow | 500ms fade-in of `shadow-lift` once scrolled | `<Header>` |
 | Form states | 0.45s fade | Errors, error banner, thank-you message |
+| Counters | 1.6s ease-out count from 0, starts as the figure passes 10% above the bottom of the screen | `<CountUp>` (Impact) |
+| Client strip | 48s linear loop of two identical copies, paused by hover or the Pause button | `animate-marquee` (`tailwind.config.ts`), `<ClientMarquee>` |
+| Testimonial row | Native snap scrolling; Previous / Next step one card, smooth unless reduced motion | `<TestimonialCarousel>` |
 | Anchor scroll | ease-in-out cubic, 500ms + 0.12ms per pixel, capped at 1400ms | `<SmoothAnchors>` |
 
 A hidden panel is `visibility: hidden`, so its contents leave the tab order and the accessibility tree. It becomes visible instantly on open and is hidden only after the closing animation ends.

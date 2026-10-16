@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleAlert, CircleCheck, ChevronDown, LoaderCircle, Phone } from 'lucide-react';
@@ -289,7 +290,13 @@ export function ContactForm() {
             contactSection.submitLabel
           )}
         </Button>
-        <p className="mt-2 text-sm text-tone-muted">{contactSection.formNote}</p>
+        <p className="mt-2 text-sm text-tone-muted">
+          {contactSection.formNote}{' '}
+          <Link href="/privacy-policy" className="font-semibold text-brass-700 underline underline-offset-4">
+            {contactSection.privacyLinkLabel}
+          </Link>
+          .
+        </p>
       </div>
 
       <p role="status" aria-live="polite" className="sr-only">

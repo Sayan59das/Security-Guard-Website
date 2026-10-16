@@ -3,7 +3,7 @@ import { Phone } from 'lucide-react';
 import { contact, hero } from '@/content/siteContent';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { PlaceholderTag } from '@/components/ui/PlaceholderTag';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 /** Staggered entrance for the hero text. `motion-safe:` keeps it off for reduced-motion visitors. */
@@ -12,13 +12,11 @@ const rise = 'motion-safe:animate-rise';
 /**
  * Layout idea: a clean split on plain navy, where nothing sits on top of anything else. The
  * headline, one supporting line and the two actions on the left; the photo in its own frame on
- * the right (a brass line a constant 8px outside it); a row of trust figures underneath.
+ * the right (a brass line a constant 8px outside it); a strip of three promises underneath.
  * On phones the photo follows the buttons. Entrance: the text rises in a stagger while the
  * photo fades in and settles from very slightly larger; both start within 120ms of first paint.
  */
 export function Hero() {
-  const hasSampleStats = hero.stats.some((stat) => stat.placeholder);
-
   return (
     <section id="top" aria-labelledby="hero-heading" className="tone-dark bg-tone-bg text-tone-fg">
       <Container className="grid items-center gap-6 pb-8 pt-6 lg:grid-cols-12 lg:gap-8 lg:pb-10 lg:pt-10">
@@ -67,23 +65,19 @@ export function Hero() {
 
       <div className="border-t border-tone-rule bg-ink-950">
         <Container className="py-3">
-          <dl className="grid grid-cols-3">
-            {hero.stats.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={cn('flex flex-col-reverse gap-0.5 px-1 sm:px-3', index > 0 && 'border-l border-tone-rule', index === 0 && 'pl-0 sm:pl-0')}
+          <ul className="grid gap-2 sm:grid-cols-3 sm:gap-0">
+            {hero.trust.map((item, index) => (
+              <li
+                key={item.label}
+                className={cn('flex items-center gap-1.5 sm:px-3', index > 0 && 'sm:border-l sm:border-tone-rule', index === 0 && 'sm:pl-0')}
               >
-                <dt className="text-sm text-tone-muted">{stat.label}</dt>
-                <dd className="font-heading text-stat font-semibold text-tone-accent">{stat.value}</dd>
-              </div>
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-tone-rule text-tone-accent">
+                  <Icon name={item.icon} className="h-2 w-2" />
+                </span>
+                <span className="text-sm font-semibold text-tone-fg">{item.label}</span>
+              </li>
             ))}
-          </dl>
-          {hasSampleStats ? (
-            <p className="mt-2 flex flex-wrap items-center gap-1 text-sm text-tone-muted">
-              <PlaceholderTag label="Sample figures" />
-              Replace these with your real numbers in content/siteContent.ts.
-            </p>
-          ) : null}
+          </ul>
         </Container>
       </div>
     </section>
